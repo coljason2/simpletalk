@@ -15,9 +15,15 @@
  */
 package com.simpletalk;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
+import javax.servlet.http.HttpSession;
+
 import org.directwebremoting.Browser;
+import org.directwebremoting.ScriptSession;
+import org.directwebremoting.WebContext;
+import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.ui.dwr.Util;
 
 /**
@@ -38,18 +44,20 @@ public class JavaChat {
 			while (messages.size() > 20) {
 				messages.removeLast();
 			}
-			messages.addLast(new Message(text));
+			Message message = new Message(text);
+			message.setUsername(getSession().getAttribute("username").toString());
+			messages.addLast(message);
 		}
 
 		// Clear the input box in the browser that kicked off this page only
 		Util.setValue("text", "");
-
+		Util.setValue("allUsers", "在線人數:" + getAllOnlineSession());
 		// For all the browsers on the current page:
 		Browser.withCurrentPage(new Runnable() {
 			public void run() {
 				StringBuilder text = new StringBuilder();
 				for (Message m : messages) {
-					String content = m.getDate() + "    " + m.getText();
+					String content = m.getDate() + " [" + m.getUsername() + "]：" + m.getText();
 					text.append(content).append("\n");
 				}
 				Util.setValue("chatlog", "");
@@ -58,4 +66,15 @@ public class JavaChat {
 		});
 	}
 
+	private HttpSession getSession() {
+		WebContext ctx = WebContextFactory.get();
+		return ctx.getSession();
+	};
+
+	private Integer getAllOnlineSession() {
+		WebContext wctx = WebContextFactory.get();
+		String currentPage = wctx.getCurrentPage();
+		Collection<ScriptSession> sessions = wctx.getScriptSessionsByPage(currentPage);
+		return sessions.size();
+	}
 }

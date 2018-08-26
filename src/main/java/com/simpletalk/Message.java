@@ -20,6 +20,7 @@ import java.util.Date;
 
 public class Message {
 
+	private String username;
 	private String text;
 	private String date;
 	private SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -38,6 +39,14 @@ public class Message {
 
 	public String getDate() {
 		return date;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 }
