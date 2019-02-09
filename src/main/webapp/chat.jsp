@@ -11,6 +11,14 @@
 	src="<c:url value="/dwr/interface/JavaChat.js?v=" /><%=new Date().getTime()%>"></script>
 <script type="text/javascript" src="<c:url value="/dwr/util.js" />"></script>
 <script type="text/javascript">
+	window.addEventListener("beforeunload", function(event) {
+		JavaChat.logoutChat();
+		event.returnValue = "我在这写点东西...";
+	});
+	window.addEventListener("load", function(event) {
+		JavaChat.loginChat();
+	});
+
 	function sendMessage() {
 		JavaChat.addMessage(dwr.util.getValue("text"));
 		var textarea = document.getElementById('chatlog');
@@ -22,8 +30,11 @@
 <body onload="dwr.engine.setActiveReverseAjax(true)"
 	style="background-color: #eee;">
 	<div class="container-fluid">
-		<h1>Simple Talker Room</h1>
-		<h2 id="allUsers"></h2>
+		<div>
+			<h1>Simple Talker Room</h1>
+			<h3 id="allUsers"></h3>
+		</div>
+
 		<div class="form-group">
 			<textarea id="chatlog" class="form-control" readonly rows="18"
 				style="resize: none; background-color: white"> </textarea>

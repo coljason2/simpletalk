@@ -15,22 +15,28 @@
  */
 package com.simpletalk;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
 import org.directwebremoting.Browser;
-import org.directwebremoting.ScriptSession;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.ui.dwr.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * @author Joe Walker [joe at getahead dot ltd dot uk]
+ * 
+ * chat server
+ * 
  */
 public class JavaChat {
+	Logger Log = LoggerFactory.getLogger(JavaChat.class);
 	private final LinkedList<Message> messages = new LinkedList<Message>();
+	private final Set<HttpSession> sessionSet = new HashSet<HttpSession>();
 
 	public void addMessage(String text) {
 		// Make sure we have a list of the list 10 messages
@@ -41,17 +47,13 @@ public class JavaChat {
 				Util.setValue("chatlog", "");
 				return;
 			}
-			while (messages.size() > 20) {
-				messages.removeLast();
-			}
 			Message message = new Message(text);
 			message.setUsername(getSession().getAttribute("username").toString());
 			messages.addLast(message);
 		}
-
 		// Clear the input box in the browser that kicked off this page only
 		Util.setValue("text", "");
-		Util.setValue("allUsers", "在線人數:" + getAllOnlineSession());
+
 		// For all the browsers on the current page:
 		Browser.withCurrentPage(new Runnable() {
 			public void run() {
@@ -71,10 +73,18 @@ public class JavaChat {
 		return ctx.getSession();
 	};
 
-	private Integer getAllOnlineSession() {
-		WebContext wctx = WebContextFactory.get();
-		String currentPage = wctx.getCurrentPage();
-		Collection<ScriptSession> sessions = wctx.getScriptSessionsByPage(currentPage);
-		return sessions.size();
+	public void loginChat() {
+		Log.info("--------add session = {}--------", getSession());
+		sessionSet.add(getSession());
+		Log.info("--------sessionSet size = {}----------", sessionSet.size());
+		Util.setValue("allUsers", "在線人數:" + sessionSet.size());
+	}
+
+	public void logoutChat() {
+		Log.info("--------delete session = {}--------", getSession());
+		sessionSet.remove(getSession());
+		getSession().removeAttribute("username");
+		Log.info("--------sessionSet size = {}----------", sessionSet.size());
+		Util.setValue("allUsers", "在線人數:" + sessionSet.size());
 	}
 }
