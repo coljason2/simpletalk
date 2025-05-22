@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com</groupId>
 	<artifactId>simpletalk</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>simpletalk Maven Webapp</name>
 	<properties>
