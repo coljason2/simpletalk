@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:replace="fragments/meta :: meta" />
+
+	<!-- DWR JavaScript (v 參數可省略或使用 Thymeleaf 設定） -->
+	<script type="text/javascript" th:src="@{/dwr/engine.js}"></script>
+	<script type="text/javascript" th:src="@{'/dwr/interface/JavaChat.js?v=' + ${#dates.createNow().time}}"></script>
+	<script type="text/javascript" th:src="@{/dwr/util.js}"></script>
+
+	<script type="text/javascript">
+		window.addEventListener("beforeunload", function (event) {
+			JavaChat.logoutChat();
+			event.returnValue = "我在这写点东西...";
+		});
+		window.addEventListener("load", function (event) {
+			JavaChat.loginChat();
+		});
+
+		function sendMessage() {
+			JavaChat.addMessage(dwr.util.getValue("text"));
+			var textarea = document.getElementById('chatlog');
+			textarea.scrollTop = textarea.scrollHeight;
+		}
+	</script>
+
+	<title>Simple Talk Room</title>
+</head>
+<body onload="dwr.engine.setActiveReverseAjax(true)" style="background-color: #eee;">
+<div class="container-fluid">
+	<div>
+		<h1>Simple Talker Room</h1>
+		<h3 id="allUsers"></h3>
+	</div>
+
+	<div class="form-group">
+            <textarea id="chatlog" class="form-control" readonly rows="18"
+					  style="resize: none; background-color: white"></textarea>
+	</div>
+
+	<form>
+		<div class="form-group">
+                <textarea class="form-control" id="text" rows="3"
+						  onkeypress="dwr.util.onReturn(event, sendMessage);"
+						  placeholder="輸入要說的訊息吧......"></textarea>
+		</div>
+		<button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendMessage()">廣播出去</button>
+	</form>
+</div>
+</body>
+</html>

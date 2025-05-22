@@ -12,59 +12,48 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.directwebremoting.ui.dwr.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-@WebFilter(filterName = "checkIsLoginFilter", urlPatterns = "*.jsp")
+@Slf4j
+@Component
 public class checkIsLoginFilter implements Filter {
-	Logger Log = LoggerFactory.getLogger(checkIsLoginFilter.class);
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
 
-	public checkIsLoginFilter() {
-		// TODO Auto-generated constructor stub
-	}
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+        HttpSession session = request.getSession(false);
 
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-	}
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
 
-	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-			throws IOException, ServletException {
-		// Log.info("=======doFilter========");
-		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) res;
-		HttpSession session = request.getSession(false);
-		// 取得根目录所对应的绝对路径:
-		String currentURL = request.getRequestURI();
-		String contextPath = request.getContextPath();
+        log.info("CheckIsLoginFilter: request URI = {}", uri);
 
-		Log.info("currentURL = {} , contextPath = {}", new Object[] { currentURL, contextPath });
-		currentURL = currentURL.replace(contextPath, "");
-		String targetURL;
-		if ("/".equals(currentURL)) {
-			targetURL = currentURL;
-		} else {
-			targetURL = currentURL.substring(currentURL.indexOf("/"), currentURL.length());
-			//Log.info(" targetURL = {} ", new Object[] { targetURL });
-		}
-		if (!"/".equals(targetURL)) {// 判断当前页是否是重定向以后的登录页面页面，如果是就不做session的判断，防止出现死循环
-			if (session == null || session.getAttribute("username") == null) {
-				// 用户登录以后需手动添加session
-				Log.info("request.getContextPath()=" + request.getContextPath());
-				// 如果session为空表示用户没有登录就重定向到login.jsp页面
-				response.sendRedirect(request.getContextPath() + "/");
-				return;
-			}
-		}
+        // 排除不需要檢查登入的路徑，例如登入頁面、靜態資源等
+        if (uri.startsWith(contextPath + "/login") ||
+                uri.startsWith(contextPath + "/css") ||
+                uri.startsWith(contextPath + "/js") ||
+                uri.startsWith(contextPath + "/dwr") ||
+                uri.startsWith(contextPath + "/images") ||
+                uri.equals(contextPath + "/") ||
+                uri.startsWith(contextPath + "/register") // 如果首頁不需要登入也排除
+        ) {
+            chain.doFilter(req, res);
+            return;
+        }
 
-		chain.doFilter(request, response);
-	}
+        if (session == null || session.getAttribute("username") == null) {
+            log.info("User not logged in, redirect to login page.");
+            response.sendRedirect(contextPath + "/"); // 改成你登入頁面路徑
+            return;
+        }
 
-	@Override
-	public void init(FilterConfig fConfig) throws ServletException {
-		Log.info("[init]");
-	}
+        chain.doFilter(req, res);
 
+    }
 }

@@ -6,11 +6,11 @@
 	<allow>
 		<!-- chat -->
 		<create creator="new" scope="application">
-			<param name="class" value="com.simpletalk.JavaChat" />
+			<param name="class" value="com.simpletalk.servlet.JavaChat" />
 		</create>
 		
 		
-		<convert converter="bean" match="com.simpletalk.Message" />
+		<convert converter="bean" match="com.simpletalk.servlet.Message" />
 	</allow>
 
 </dwr>
