@@ -29,7 +29,7 @@ public class RegisterController {
         Object username = session.getAttribute("username");
 
         log.info("username={}", username);
-        
+
         if (username == null) {
             return "redirect:/";
         }
