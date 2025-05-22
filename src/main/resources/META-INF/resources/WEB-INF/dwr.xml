@@ -3,14 +3,14 @@
 
 <dwr>
 
-	<allow>
-		<!-- chat -->
-		<create creator="new" scope="application">
-			<param name="class" value="com.simpletalk.servlet.JavaChat" />
-		</create>
-		
-		
-		<convert converter="bean" match="com.simpletalk.servlet.Message" />
-	</allow>
+    <allow>
+        <!-- chat -->
+        <create creator="new" scope="application" javascript="JavaChat">
+            <param name="class" value="com.simpletalk.servlet.JavaChat"/>
+        </create>
+
+
+        <convert converter="bean" match="com.simpletalk.servlet.Message"/>
+    </allow>
 
 </dwr>
