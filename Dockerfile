@@ -15,9 +15,9 @@ WORKDIR /app
 
 COPY --from=builder /app/target/*.jar app.jar
 
-EXPOSE 9090
+EXPOSE 8080
 
-ENV PORT=9090
+ENV PORT=8080
 ENV JAVA_OPTS="-Xmx500m -Xms64m"
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar --server.port=${PORT}"]
