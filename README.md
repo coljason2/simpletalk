@@ -7,6 +7,7 @@
 ### 環境
 * Sprint Boot
 * Render Free
+* Docker
 
 ### Demo 網址
 * https://simpletalk.onrender.com
