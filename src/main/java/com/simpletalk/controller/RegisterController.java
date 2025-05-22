@@ -25,7 +25,14 @@ public class RegisterController {
     }
 
     @GetMapping
-    public String redirectToChat() {
+    public String redirectToChat(HttpSession session) {
+        Object username = session.getAttribute("username");
+
+        log.info("username={}", username);
+        
+        if (username == null) {
+            return "redirect:/";
+        }
         return "chat";
     }
 }
