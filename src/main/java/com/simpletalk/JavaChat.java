@@ -21,20 +21,19 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.directwebremoting.Browser;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.directwebremoting.ui.dwr.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
  * chat server
  * 
  */
+@Slf4j
 public class JavaChat {
-	Logger Log = LoggerFactory.getLogger(JavaChat.class);
 	private final LinkedList<Message> messages = new LinkedList<Message>();
 	private final Set<HttpSession> sessionSet = new HashSet<HttpSession>();
 
@@ -74,17 +73,17 @@ public class JavaChat {
 	};
 
 	public void loginChat() {
-		Log.info("--------add session = {}--------", getSession());
+		log.info("--------add session = {}--------", getSession());
 		sessionSet.add(getSession());
-		Log.info("--------sessionSet size = {}----------", sessionSet.size());
+		log.info("--------sessionSet size = {}----------", sessionSet.size());
 		Util.setValue("allUsers", "在線人數:" + sessionSet.size());
 	}
 
 	public void logoutChat() {
-		Log.info("--------delete session = {}--------", getSession());
+		log.info("--------delete session = {}--------", getSession());
 		sessionSet.remove(getSession());
 		getSession().removeAttribute("username");
-		Log.info("--------sessionSet size = {}----------", sessionSet.size());
+		log.info("--------sessionSet size = {}----------", sessionSet.size());
 		Util.setValue("allUsers", "在線人數:" + sessionSet.size());
 	}
 }

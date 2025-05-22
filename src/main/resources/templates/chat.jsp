@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<jsp:include page="/layout/meta.jsp" />
+<jsp:include page="/templates/meta.jsp" />
 <script type="text/javascript" src="<c:url value="/dwr/engine.js?v" />"></script>
 <script type="text/javascript"
 	src="<c:url value="/dwr/interface/JavaChat.js?v=" /><%=new Date().getTime()%>"></script>
