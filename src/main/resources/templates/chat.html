@@ -1,85 +1,109 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="fragments/meta :: meta"/>
+    <th:block th:replace="fragments/meta :: meta" />
 
-    <!-- DWR JavaScript (v 參數可省略或使用 Thymeleaf 設定） -->
-    <script type="text/javascript" th:src="@{/dwr/engine.js}"></script>
-    <script type="text/javascript" th:src="@{/dwr/interface/JavaChat.js}"></script>
-    <script type="text/javascript" th:src="@{/dwr/util.js}"></script>
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-MEc2h4vWvO3DrYHkqOzNs5pQacNoMZ6hCv6X+z/OXbnBvD1G/7n8KiGz1MzZ4i/L"
+          crossorigin="anonymous" />
+
+    <!-- DWR -->
+    <script th:src="@{/dwr/engine.js}"></script>
+    <script th:src="@{/dwr/interface/JavaChat.js}"></script>
+    <script th:src="@{/dwr/util.js}"></script>
+
+    <title>Simple Talk Room</title>
 
     <script type="text/javascript">
-        window.addEventListener("beforeunload", function (event) {
-            JavaChat.logoutChat();
-            event.returnValue = "我在这写点东西...";
-        });
-        window.addEventListener("load", function (event) {
+        function sendMessage() {
+            JavaChat.addMessage(dwr.util.getValue("text"));
+            const chatlog = document.getElementById('chatlog');
+            chatlog.scrollTop = chatlog.scrollHeight;
+        }
+
+        window.addEventListener("load", function () {
+            dwr.engine.setActiveReverseAjax(true);
             JavaChat.loginChat();
         });
 
-        function sendMessage() {
-            JavaChat.addMessage(dwr.util.getValue("text"));
-            var textarea = document.getElementById('chatlog');
-            textarea.scrollTop = textarea.scrollHeight;
-        }
+        window.addEventListener("beforeunload", function (event) {
+            try {
+                JavaChat.logoutChat();
+            } catch (e) {
+                console.error("logoutChat failed", e);
+            }
+            event.returnValue = "你確定要離開聊天室嗎？";
+        });
     </script>
 
-    <title>Simple Talk Room</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        #chatlog {
+            height: 450px;
+            resize: none;
+            background-color: #ffffff;
+            border: 1px solid #ced4da;
+        }
+
+        #userList {
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
-<body onload="dwr.engine.setActiveReverseAjax(true)" style="background-color: #eee;">
-<div class="container-fluid">
-    <div>
-        <h1>Simple Talker Room</h1>
-        <h3 id="allUsers"></h3>
+
+<body>
+<div class="container py-4">
+    <div class="text-center mb-4">
+        <h1 class="display-4">Simple Talk Room</h1>
+        <p id="allUsers" class="text-muted"></p>
     </div>
 
     <div class="row">
-        <!-- 左邊：聊天紀錄 -->
-        <div class="col-md-9">
-            <div class="form-group">
-                <textarea id="chatlog" class="form-control" readonly rows="18"
-                          style="resize: none; background-color: white; height: 100%;"></textarea>
+        <!-- Chat Log -->
+        <div class="col-md-9 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    💬 聊天紀錄
+                </div>
+                <div class="card-body p-2">
+                    <textarea id="chatlog" class="form-control" readonly></textarea>
+                </div>
             </div>
         </div>
 
-        <!-- 右邊：在線用戶 -->
-        <div class="col-md-3">
-            <div class="card" style="height: 100%; max-height: 400px; overflow-y: auto;">
+        <!-- User List -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    🟢 在線用戶
+                </div>
                 <div class="card-body">
-                    <h5 class="card-title">在線用戶</h5>
-                    <div id="userList" style="white-space: nowrap;"></div>
+                    <div id="userList"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 訊息輸入區 -->
-    <form>
-        <div class="form-group">
-            <textarea class="form-control" id="text" rows="3"
-                      onkeypress="dwr.util.onReturn(event, sendMessage);"
-                      placeholder="輸入要說的訊息吧......"></textarea>
+    <!-- Input Form -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form onsubmit="event.preventDefault(); sendMessage();">
+                <div class="form-group">
+                    <textarea id="text" class="form-control" rows="3"
+                              onkeypress="dwr.util.onReturn(event, sendMessage);"
+                              placeholder="輸入你想說的訊息吧..."></textarea>
+                </div>
+                <button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendMessage()">📢 廣播出去</button>
+            </form>
         </div>
-        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendMessage()">廣播出去</button>
-    </form>
+    </div>
 </div>
-
-<script type="text/javascript">
-    // 啟用 Reverse Ajax 並登入
-    window.addEventListener("load", function () {
-        dwr.engine.setActiveReverseAjax(true);
-        JavaChat.loginChat();
-    });
-
-    // 視窗關閉時自動登出
-    window.addEventListener("beforeunload", function (event) {
-        try {
-            JavaChat.logoutChat();
-        } catch (e) {
-            console.error("logoutChat 呼叫失敗", e);
-        }
-        event.returnValue = "你確定要離開聊天室嗎？";
-    });
-</script>
 </body>
 </html>

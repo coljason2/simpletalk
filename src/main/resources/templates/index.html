@@ -1,25 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<!-- 若有 meta.html，可改為 fragment 引入 -->
-	<th:block th:replace="fragments/meta :: meta" />
+	<th:block th:replace="fragments/meta :: meta"/>
 
-	<link rel="stylesheet" th:href="@{/resources/static/login-style.css}" />
-	<title>Login</title>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+
+	<!-- 自訂樣式（可選） -->
+	<style>
+		body {
+			background-color: #f8f9fa;
+		}
+
+		.login-card {
+			max-width: 400px;
+			margin: 60px auto;
+			border: none;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+			border-radius: 10px;
+		}
+
+		.login-card .card-header {
+			background-color: #007bff;
+			color: white;
+			font-size: 1.5rem;
+			text-align: center;
+			border-radius: 10px 10px 0 0;
+		}
+
+		.login-card .card-body {
+			padding: 2rem;
+		}
+
+		.form-heading {
+			text-align: center;
+			font-weight: bold;
+			margin-bottom: 1.5rem;
+		}
+	</style>
+
+	<title>Login - Simple Talk</title>
 </head>
 <body>
+
 <div class="container">
-	<h1 class="form-heading" align="center">Simple Talk Room</h1>
-	<div class="main-div">
-		<form id="login-form" class="form-signin" th:action="@{/register}" method="post">
-			<h3 class="form-signin-heading">給個聊天名稱吧</h3>
-			<p class="form-signin-heading">一個簡單的聊天平台</p>
-			<div class="form-group">
-				<input class="form-control" name="username" placeholder="輸入聊天名稱" />
-			</div>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">開始聊天</button>
-		</form>
+	<div class="card login-card">
+		<div class="card-header">
+			Simple Talk Room
+		</div>
+		<div class="card-body">
+			<form id="login-form" class="form-signin" th:action="@{/register}" method="post">
+				<h5 class="form-heading mb-3">給個聊天名稱吧 👇</h5>
+				<p class="text-muted">一個簡單的聊天平台</p>
+
+				<div class="form-group">
+					<input type="text" class="form-control" name="username" placeholder="輸入聊天名稱" required/>
+				</div>
+
+				<button class="btn btn-primary btn-block btn-lg" type="submit">🚀 開始聊天</button>
+			</form>
+		</div>
 	</div>
 </div>
+
 </body>
 </html>
