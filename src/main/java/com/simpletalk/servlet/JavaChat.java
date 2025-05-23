@@ -22,8 +22,8 @@ import org.springframework.stereotype.Service;
 @Service("JavaChat")
 @RemoteProxy(name = "JavaChat")
 public class JavaChat {
-    private final LinkedList<Message> messages = new LinkedList<Message>();
-    private final Set<HttpSession> sessionSet = new HashSet<HttpSession>();
+    private static final LinkedList<Message> messages = new LinkedList<Message>();
+    private static final Set<HttpSession> sessionSet = new HashSet<HttpSession>();
 
     @RemoteMethod
     public void addMessage(String text) {
