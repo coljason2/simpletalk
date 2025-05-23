@@ -16,7 +16,7 @@ public class RegisterController {
 
     @PostMapping
     public String register(@RequestParam("username") String username, HttpSession session) {
-        log.info("username={}", username);
+        log.info("[SimpleTalk] username={}", username);
 
         if (username != null && !username.trim().isEmpty()) {
             session.setAttribute("username", username.trim());
@@ -28,7 +28,7 @@ public class RegisterController {
     public String redirectToChat(HttpSession session) {
         Object username = session.getAttribute("username");
 
-        log.info("username={}", username);
+        log.info("[SimpleTalk] username={}", username);
 
         if (username == null) {
             return "redirect:/";

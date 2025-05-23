@@ -1,18 +1,3 @@
-/*
- * Copyright 2005 Joe Walker
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.simpletalk.servlet;
 
 import java.util.HashSet;
@@ -25,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.directwebremoting.Browser;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.ui.dwr.Util;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -33,10 +21,13 @@ import org.directwebremoting.ui.dwr.Util;
  * 
  */
 @Slf4j
+@Service
+@RemoteProxy(name = "JavaChat")
 public class JavaChat {
 	private final LinkedList<Message> messages = new LinkedList<Message>();
 	private final Set<HttpSession> sessionSet = new HashSet<HttpSession>();
 
+	@RemoteMethod
 	public void addMessage(String text) {
 		// Make sure we have a list of the list 10 messages
 		if (text != null && text.trim().length() > 0) {
@@ -72,18 +63,20 @@ public class JavaChat {
 		return ctx.getSession();
 	};
 
+	@RemoteMethod
 	public void loginChat() {
-		log.info("--------add session = {}--------", getSession());
+		log.info("[SimpleTalk] add session = {}", getSession());
 		sessionSet.add(getSession());
-		log.info("--------sessionSet size = {}----------", sessionSet.size());
+		log.info("[SimpleTalk] sessionSet size = {}", sessionSet.size());
 		Util.setValue("allUsers", "在線人數:" + sessionSet.size());
 	}
 
+	@RemoteMethod
 	public void logoutChat() {
-		log.info("--------delete session = {}--------", getSession());
+		log.info("[SimpleTalk] delete session = {} ", getSession());
 		sessionSet.remove(getSession());
 		getSession().removeAttribute("username");
-		log.info("--------sessionSet size = {}----------", sessionSet.size());
+		log.info("[SimpleTalk] sessionSet size = {} ", sessionSet.size());
 		Util.setValue("allUsers", "在線人數:" + sessionSet.size());
 	}
 }

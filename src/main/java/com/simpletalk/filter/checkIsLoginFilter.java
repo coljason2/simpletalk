@@ -32,7 +32,7 @@ public class checkIsLoginFilter implements Filter {
         String uri = request.getRequestURI();
         String contextPath = request.getContextPath();
 
-        log.info("CheckIsLoginFilter: request URI = {}", uri);
+        log.info("[SimpleTalk] CheckIsLoginFilter: request URI = {}", uri);
 
         // 排除不需要檢查登入的路徑，例如登入頁面、靜態資源等
         if (uri.startsWith(contextPath + "/login") ||
@@ -48,7 +48,7 @@ public class checkIsLoginFilter implements Filter {
         }
 
         if (session == null || session.getAttribute("username") == null) {
-            log.info("User not logged in, redirect to login page.");
+            log.info("[SimpleTalk] User not logged in, redirect to login page.");
             response.sendRedirect(contextPath + "/"); // 改成你登入頁面路徑
             return;
         }
