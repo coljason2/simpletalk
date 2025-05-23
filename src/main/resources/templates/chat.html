@@ -1,51 +1,85 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<th:block th:replace="fragments/meta :: meta" />
+    <th:block th:replace="fragments/meta :: meta"/>
 
-	<!-- DWR JavaScript (v 參數可省略或使用 Thymeleaf 設定） -->
-	<script type="text/javascript" th:src="@{/dwr/engine.js}"></script>
-	<script type="text/javascript" th:src="@{/dwr/interface/JavaChat.js}"></script>
-	<script type="text/javascript" th:src="@{/dwr/util.js}"></script>
+    <!-- DWR JavaScript (v 參數可省略或使用 Thymeleaf 設定） -->
+    <script type="text/javascript" th:src="@{/dwr/engine.js}"></script>
+    <script type="text/javascript" th:src="@{/dwr/interface/JavaChat.js}"></script>
+    <script type="text/javascript" th:src="@{/dwr/util.js}"></script>
 
-	<script type="text/javascript">
-		window.addEventListener("beforeunload", function (event) {
-			JavaChat.logoutChat();
-			event.returnValue = "我在这写点东西...";
-		});
-		window.addEventListener("load", function (event) {
-			JavaChat.loginChat();
-		});
+    <script type="text/javascript">
+        window.addEventListener("beforeunload", function (event) {
+            JavaChat.logoutChat();
+            event.returnValue = "我在这写点东西...";
+        });
+        window.addEventListener("load", function (event) {
+            JavaChat.loginChat();
+        });
 
-		function sendMessage() {
-			JavaChat.addMessage(dwr.util.getValue("text"));
-			var textarea = document.getElementById('chatlog');
-			textarea.scrollTop = textarea.scrollHeight;
-		}
-	</script>
+        function sendMessage() {
+            JavaChat.addMessage(dwr.util.getValue("text"));
+            var textarea = document.getElementById('chatlog');
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+    </script>
 
-	<title>Simple Talk Room</title>
+    <title>Simple Talk Room</title>
 </head>
 <body onload="dwr.engine.setActiveReverseAjax(true)" style="background-color: #eee;">
 <div class="container-fluid">
-	<div>
-		<h1>Simple Talker Room</h1>
-		<h3 id="allUsers"></h3>
-	</div>
+    <div>
+        <h1>Simple Talker Room</h1>
+        <h3 id="allUsers"></h3>
+    </div>
 
-	<div class="form-group">
-            <textarea id="chatlog" class="form-control" readonly rows="18"
-					  style="resize: none; background-color: white"></textarea>
-	</div>
+    <div class="row">
+        <!-- 左邊：聊天紀錄 -->
+        <div class="col-md-9">
+            <div class="form-group">
+                <textarea id="chatlog" class="form-control" readonly rows="18"
+                          style="resize: none; background-color: white; height: 100%;"></textarea>
+            </div>
+        </div>
 
-	<form>
-		<div class="form-group">
-                <textarea class="form-control" id="text" rows="3"
-						  onkeypress="dwr.util.onReturn(event, sendMessage);"
-						  placeholder="輸入要說的訊息吧......"></textarea>
-		</div>
-		<button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendMessage()">廣播出去</button>
-	</form>
+        <!-- 右邊：在線用戶 -->
+        <div class="col-md-3">
+            <div class="card" style="height: 100%; max-height: 400px; overflow-y: auto;">
+                <div class="card-body">
+                    <h5 class="card-title">在線用戶</h5>
+                    <div id="userList" style="white-space: nowrap;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 訊息輸入區 -->
+    <form>
+        <div class="form-group">
+            <textarea class="form-control" id="text" rows="3"
+                      onkeypress="dwr.util.onReturn(event, sendMessage);"
+                      placeholder="輸入要說的訊息吧......"></textarea>
+        </div>
+        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="sendMessage()">廣播出去</button>
+    </form>
 </div>
+
+<script type="text/javascript">
+    // 啟用 Reverse Ajax 並登入
+    window.addEventListener("load", function () {
+        dwr.engine.setActiveReverseAjax(true);
+        JavaChat.loginChat();
+    });
+
+    // 視窗關閉時自動登出
+    window.addEventListener("beforeunload", function (event) {
+        try {
+            JavaChat.logoutChat();
+        } catch (e) {
+            console.error("logoutChat 呼叫失敗", e);
+        }
+        event.returnValue = "你確定要離開聊天室嗎？";
+    });
+</script>
 </body>
 </html>

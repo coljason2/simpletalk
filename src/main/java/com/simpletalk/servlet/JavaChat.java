@@ -1,8 +1,6 @@
 package com.simpletalk.servlet;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -24,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class JavaChat {
     private static final LinkedList<Message> messages = new LinkedList<Message>();
     private static final Set<HttpSession> sessionSet = new HashSet<HttpSession>();
+    private static final Map<HttpSession, String> sessionMap = new HashMap<>();
 
     @RemoteMethod
     public void addMessage(String text) {
@@ -61,22 +60,42 @@ public class JavaChat {
         return ctx.getSession();
     }
 
-    ;
-
     @RemoteMethod
     public void loginChat() {
-        log.info("[SimpleTalk] add session = {}", getSession());
-        sessionSet.add(getSession());
-        log.info("[SimpleTalk] sessionSet size = {}", sessionSet.size());
-        Util.setValue("allUsers", "在線人數:" + sessionSet.size());
+        HttpSession session = getSession();
+        String username = (String) session.getAttribute("username");
+        if (username == null || username.trim().isEmpty()) {
+            username = "訪客_" + session.getId().substring(0, 5); // fallback
+            session.setAttribute("username", username);
+        }
+
+        sessionMap.put(session, username);
+        log.info("[SimpleTalk] add session = {} (username: {})", session, username);
+        // 推送到所有頁面
+        Browser.withAllSessions(() -> {
+            Util.setValue("allUsers", "在線人數:" + sessionMap.size());
+            Util.setValue("userList", getAllUsernames());
+        });
     }
 
     @RemoteMethod
     public void logoutChat() {
-        log.info("[SimpleTalk] delete session = {} ", getSession());
-        sessionSet.remove(getSession());
-        getSession().removeAttribute("username");
-        log.info("[SimpleTalk] sessionSet size = {} ", sessionSet.size());
-        Util.setValue("allUsers", "在線人數:" + sessionSet.size());
+        HttpSession session = getSession();
+        sessionMap.remove(session);
+        session.removeAttribute("username");
+        log.info("[SimpleTalk] remove session = {}", session);
+// 推送到所有頁面
+        Browser.withAllSessions(() -> {
+            Util.setValue("allUsers", "在線人數:" + sessionMap.size());
+            Util.setValue("userList", getAllUsernames());
+        });
+    }
+
+    private String getAllUsernames() {
+        StringBuilder sb = new StringBuilder();
+        for (String name : sessionMap.values()) {
+            sb.append(name).append("<br/>");
+        }
+        return sb.toString();
     }
 }
