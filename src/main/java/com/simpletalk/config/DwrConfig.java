@@ -18,6 +18,7 @@ public class DwrConfig {
             ServletRegistrationBean<DwrServlet> reg = new ServletRegistrationBean<>(servlet, "/dwr/*");
             reg.setName("dwrServlet");
             reg.addInitParameter("debug", "true");
+            reg.addInitParameter("activeReverseAjaxEnabled", "true");
             reg.addInitParameter("initApplicationScopeCreatorsAtStartup", "true");
             log.info("[SimpleTalk] DWR Spring Servlet (DwrSpringServlet) configured with debug mode.");
             reg.addInitParameter("classes", "com.simpletalk.servlet.JavaChat");
