@@ -35,11 +35,18 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- DWR -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.directwebremoting</groupId>-->
+        <!--            <artifactId>dwr</artifactId>-->
+        <!--            <version>3.0.2-RELEASE</version>-->
+        <!--            <type>pom</type>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.directwebremoting</groupId>
             <artifactId>dwr</artifactId>
-            <version>3.0.2-RELEASE</version>
+            <version>3.0.3-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/libraries/dwr-3.0.3-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 
@@ -48,6 +55,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
